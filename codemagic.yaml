@@ -1,0 +1,23 @@
+workflows:
+  ios-workflow:
+    name: Build iOS App
+    environment:
+      vars:
+        XCODE_WORKSPACE: "Runner.xcworkspace"
+        XCODE_SCHEME: "Runner"
+        FLUTTER_BUILD_MODE: "release"
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - name: Set deployment target to 12.0
+        script: |
+          echo "Updating iOS deployment target"
+          sed -i '' 's/platform :ios, .*/platform :ios, "12.0"/g' ios/Podfile
+      - name: Get packages
+        script: |
+          flutter pub get
+      - name: Build iOS
+        script: |
+          flutter build ios --release --no-codesign
+    artifacts:
+      - build/ios/ipa/*.ipa
